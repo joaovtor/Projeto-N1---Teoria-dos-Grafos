@@ -3,7 +3,7 @@
 
 vector<Vertice> nodos;
 
-
+// preenche o vetor de vertices
 void criaVertice(int tam){
     //recebe o tamanho e faz a atribuição aqui dentro
     for (int i = 0; i < tam; i++)
@@ -24,31 +24,43 @@ void criaVertice(int tam){
     
 };
 
-void printVetor(){
+void initMatriz(vector<vector<int>> & v, int tam){
+    
+    for (int i = 0; i < tam; i++)
+    {
+        vector<int> v1;
+        for (int j = 0; j < tam; j++)
+        {
+            v1.push_back(0);
+
+        }
+
+        v.push_back(v1);
+    }
+    
+}
+
+//imprime o vetor de vertices
+void printVetorVert(){
     cout << "\n\nImprimindo informacoes\n";
 
     for (int i = 0; i < nodos.size(); i++)
     {
-        cout << "\nVertice " << i << ":\n";
+        cout << "\nVertice " << i+1 << ":\n";
         nodos[i].print();
     }
     
 }
 
+//imprime as informações de um vertice especifico
 void printVertice(int vertice){
-    for (int i = 0; i < nodos.size(); i++)
-    {
-        if (i == vertice)
-        {
-            cout << "\nNodo " << i << ":";
-            nodos[i].print();
-        }
-        
-    }
+    
+    nodos.at(vertice-1).print();
     
 }
 
-void addAresta(int matriz[][10]){
+
+void addAresta(vector<vector<int>> & v){
 
     int x, y;
 
@@ -56,24 +68,28 @@ void addAresta(int matriz[][10]){
     cin >> x;
     cout << "\nDigite o segundo vertice que deseja conectar: ";
     cin >> y;
-    matriz[x][y] = 1;
-    matriz[y][x] = 1;
 
-    cout << "\nInformacao dos vertices conectados: ";
+    v.at(x-1).at(y-1) = 1;
+    v.at(y-1).at(x-1) = 1;
+
+    cout << "\nInformacao dos vertices conectados";
 
     printVertice(x);
     printVertice(y);
 }
 
-void removeAresta(int matriz[][10]){
+
+void removeAresta(vector<vector<int>> & v){
+
     int x, y;
 
-    cout << "\nDigite primeiro vertice que deseja remover da conexao: ";
+    cout << "\nDigite primeiro vertice que deseja desconectar: ";
     cin >> x;
-    cout << "\nDigite o segundo vertice que deseja remover da conexao: ";
+    cout << "\nDigite o segundo vertice que deseja desconectar: ";
     cin >> y;
-    matriz[x][y] = 0;
-    matriz[y][x] = 0;
+
+    v.at(x-1).at(y-1) = 0;
+    v.at(y-1).at(x-1) = 0;
 
     cout << "\nInformacao dos vertices desconectados: ";
 
@@ -81,38 +97,42 @@ void removeAresta(int matriz[][10]){
     printVertice(y);
 }
 
-void printMatriz(int matriz[][10]){
-    for (int i = 0; i < nodos.size(); i++)
-    {
-        for (int j = 0; j < nodos.size(); j++)
-        {
-            cout << matriz[i][j];
+//imprime a matriz de adjacencia
+void printMatriz(vector<vector<int>> & vec){
+
+    cout << "\n\nImprimindo matriz de adjacencia\n";
+    for (int i = 0; i < vec.size(); i++) {
+        for (int j = 0; j < vec[i].size(); j++){
+            cout << vec[i][j] << " ";
+
         }
-        
+    cout << endl;  
     }
-    
 }
 
-void menu(int matriz[10][10]){
+
+void menu(vector<vector<int>> & vec){
     int op;    
 
     cout << "\n\nMENU PRINCIPAL\n\n";
     while (op != 0)
     {
         cout    << "\n1 - Adicionar arestas;" << endl
-                << "2 - Remover arestas;"   << endl;
+                << "2 - Remover arestas;"   << endl
+                << "3 - Imprimir matriz de adjacencia" << endl
+                << "0 - Sair" << endl;
         cin >> op;
 
         switch (op)
         {
         case 1:
-            addAresta(matriz[10][10]);
+            addAresta(vec);
             break;
         case 2:
-            removeAresta(matriz[10][10]);
+            removeAresta(vec);
             break;
         case 3:
-            printMatriz(matriz[10][10]);
+            printMatriz(vec);
         default:
             break;
         }
@@ -127,19 +147,13 @@ int main()
     cout << "Tamanho do grafo: ";
     cin >> tMatriz;
 
-    int matriz[tMatriz][tMatriz];
+    vector<vector<int>> matriz;
 
     //inicializar a matriz em 0
-    for (int i = 0; i < tMatriz; i++)
-    {
-        for (int j = 0; j < tMatriz; j++)
-        {
-            matriz[i][j] = 0;
-        }
-    }
+    initMatriz(matriz, tMatriz);
 
     criaVertice(tMatriz);
-    printVetor();
+    printVetorVert();
 
     menu(matriz);
     
