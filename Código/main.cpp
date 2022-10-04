@@ -3,7 +3,7 @@
 #include<bits/stdc++.h>
 
 vector<Vertice> nodos;
-vector<vector<int>> lista;
+vector<pair<int,int>> lista;
 
 
 // preenche o vetor de vertices
@@ -28,7 +28,7 @@ void criaVertice(int tam){
     
 };
 
-void initMatriz(vector<vector<int>> & v, int tam){
+void initGrafo(vector<vector<int>> & v, int tam){
     
     for (int i = 0; i < tam; i++)
     {
@@ -63,18 +63,20 @@ void printVertice(int vertice){
     nodos.at(vertice-1).print();
     
 }
-
-void addEdge(int v1,int v2)
+//
+void addEdge(vector <pair<int, int> > lista[],int v1, int v2, int peso)
 {
-    if(v1 != v2){
-        lista[v1-1].push_back(v2);
-        lista[v2-1].push_back(v1);
-    }else{
-	    lista[v1-1].push_back(v2);
-    }
+    if (v1 != v2)
+    {
+        lista[v1-1].push_back(make_pair(v2, peso));
+	    lista[v2-1].push_back(make_pair(v1, peso));
+    }else
+        lista[v1-1].push_back(make_pair(v2, peso));
+    
+	
 }
-
-void addAresta(vector<vector<int>> & lista){
+//
+void addAresta(vector <pair<int, int> > lista[]){
 
     int x, y;
 
@@ -84,7 +86,7 @@ void addAresta(vector<vector<int>> & lista){
     cin >> y;
 
 
-    addEdge(x,y);
+    addEdge(lista, x, y, 0);
 
     cout << "\nInformacao dos vertices conectados";
 
@@ -92,13 +94,43 @@ void addAresta(vector<vector<int>> & lista){
     printVertice(y);
 }
 
-//recebe dois vertices e retorna 1 caso eles estejam conectados, fiz assim porque daí podemos usar nas outras funções pra alertar que já existe conexão
-int checkAresta(vector<vector<int>> & lista,int v1, int v2){
+//
+int checkLaco(vector <pair<int, int> > lista[], int v1){
+
     int x = 0;
 
-    for (int i = 0; i < lista[v1].size(); i++)
+    for (auto it = lista[v1-1].begin(); it!=lista[v1-1].end(); it++)
     {
-        if(lista[v1-1][i] == v2){
+        if(it->first == v1){
+            x = 1;
+        }
+    }
+    return x;
+}
+
+//
+void verificaLaco(vector <pair<int, int> > lista[]){
+    int v1;
+
+    cout << "\nDigite o vertice que deseja checar a existencia de laco: ";
+    cin >> v1;
+
+    if(checkLaco(lista, v1) == 1){
+        cout << "\nExiste um laco";
+    }else{
+        cout << "\nNao existe um laco";
+    }
+
+    printVertice(v1);
+}
+
+//recebe dois vertices e retorna 1 caso eles estejam conectados, fiz assim porque daí podemos usar nas outras funções pra alertar que já existe conexão
+int checkAresta(vector <pair<int, int> > lista[],int v1, int v2){
+    int x = 0;
+
+    for (auto it = lista[v1-1].begin(); it!=lista[v1-1].end(); it++)
+    {
+        if(it->first == v2){
             x = 1;
         }
     }
@@ -106,40 +138,8 @@ int checkAresta(vector<vector<int>> & lista,int v1, int v2){
     return x;    
 }
 
-int checkLaco(int v1){
-
-    int x = 0;
-
-    cout << "Tamanho da linha: " << lista[v1-1].size();
-    for (int i = 0; i < lista[v1-1].size(); i++)
-    {
-        if(lista[v1-1][i] == v1){
-            cout << "X eh igual a 1 na posicao i: " << i;
-            x = 1;
-        }
-    }
-    cout << "\nX: " << x;
-    return x;
-}
-
-
-void verificaLaco(){
-    int x;
-
-    cout << "\nDigite o vertice que deseja checar a existencia de laco: ";
-    cin >> x;
-
-    if(checkLaco(x) == 1){
-        cout << "\nExiste um laco";
-    }else{
-        cout << "\nNao existe um laco";
-    }
-
-    printVertice(x);
-}
-
 //checa se dois vertices estao conectados
-void verificaAdj(vector<vector<int>> & m){
+void verificaAdj(vector <pair<int, int> > lista[]){
     int v1, v2;
     
     cout << "\nDigite o primeiro vertice para checar adjacencia: ";
@@ -147,7 +147,7 @@ void verificaAdj(vector<vector<int>> & m){
     cout << "\nDigite o segundo vertice para checar adjacencia: ";
     cin >> v2;
 
-    if (checkAresta(m,v1,v2) == 1)
+    if (checkAresta(lista, v1, v2) == 1)
     {
         cout << "\nExiste conexao entre os vertices";
 
@@ -158,70 +158,94 @@ void verificaAdj(vector<vector<int>> & m){
     
 }
 
-void removeAresta(vector<vector<int>> & lista){
+//
+void delEdge(vector <pair<int, int> > lista[], int v1, int v2){
+	
+    if (v1 != v2)
+    {
+        for (auto it = lista[v1-1].begin(); it!=lista[v1-1].end(); it++)
+	    {
+            cout << "\nIT->FIRST 1: " << it->first;
+		    if (it->first == v2)
+		    {
+                cout << "\nAPAGOU NO IF 1";
+			    lista[v1-1].erase(it);	
+                break;
+		    }
+		
+	    }
+	    for (auto it = lista[v2-1].begin(); it!=lista[v2-1].end(); it++)
+	    {
+            cout << "\nIT->FIRST 2: " << it->first;
+		    if (it->first == v1)
+		    {
+                cout << "\nAPAGOU NO IF 2";
+			    lista[v2-1].erase(it);	
+                break;
+		    }
+	    }
+    }
+    else
+    {
+        for (auto it = lista[v1-1].begin(); it!=lista[v1-1].end(); it++)
+	    {
 
-    int x, y;
+	        if (it->first == v2)
+		    {
+		        lista[v1-1].erase(it);
+                break;	
+	        }
+		
+	    }
+    }
+}
+
+//
+void removeAresta(vector <pair<int, int> > lista[]){
+
+    int v1, v2;
 
     cout << "\nDigite primeiro vertice que deseja desconectar: ";
-    cin >> x;
+    cin >> v1;
     cout << "\nDigite o segundo vertice que deseja desconectar: ";
-    cin >> y;
+    cin >> v2;
 
-    if(x !=y){
-
-    for (int i = 0; i < lista[x].size(); i++) {
-        if (lista[x][i] == y) {
-            lista[x].erase(lista[x].begin() + i);
-            break;
-        }
-    }
- 
-    // Traversing through the second vector list
-    // and removing the first element from it
-    for (int i = 0; i < lista[y].size(); i++) {
-        if (lista[y][i] == x) {
-            lista[y].erase(lista[y].begin() + i);
-            break;
-        }
-    }
-    }else{
-       for (int i = 0; i < lista[x].size(); i++) {
-        if (lista[x][i] == y) {
-            lista[x].erase(lista[x].begin() + i);
-            break;
-        }
-    } 
-    }
+    delEdge(lista, v1, v2);
 
     cout << "\nInformacao dos vertices desconectados: ";
 
-    printVertice(x);
-    printVertice(y);
+    printVertice(v1);
+    printVertice(v2);
 }
 
 //imprime a matriz de adjacencia
-void printLista(vector<vector<int>> & lista, int V){
-
-    cout << "\n\nImprimindo matriz de adjacencia\n";
-    for (int d = 0; d < lista.size(); ++d) {
-    cout << "\n Vertex "
-       << d+1 << ":";
-    for (auto x : lista[d])
-      cout << "-> " << x;
-    printf("\n");
-  }
+void printLista(vector<pair<int,int> > adj[], int tGrafo)
+{
+    int v, w;
+    for (int u = 0; u < tGrafo; u++)
+    {
+        cout << "Vertice " << u+1 << " esta conectado com \n";
+        for (auto it = adj[u].begin(); it!=adj[u].end(); it++)
+        {
+            v = it->first;
+            w = it->second;
+            cout << "\tVertice " << it->first << " com peso da aresta de: "
+                 << it->second << "\n";
+        }
+        cout << "\n";
+    }
 }
 
-bool checkCaminho(int v1,int v2)
+//
+bool checkCaminho(vector <pair<int, int> > lista[], int v1,int v2, int tGrafo)
 {
 	// Base case
-	if(v1 == v2)
+	if(v1 == v2){
 		return true;
+	}
 
-	int n = (int)lista.size();
-	
 	// Mark all the vertices as not visited
-	vector<bool> visited(n,false);
+	vector<bool> visited(tGrafo,false);
 
 	// Create a queue for BFS
 	queue<int> q;
@@ -233,26 +257,29 @@ bool checkCaminho(int v1,int v2)
 	while(!q.empty())
 	{
 		// Dequeue a vertex from queue and print it
-		v1=q.front();
+		v1 = q.front();
 		q.pop();
 
 		// Get all adjacent vertices of the dequeued vertex s
 		// If a adjacent has not been visited, then mark it
 		// visited and enqueue it	
-		for(auto x:lista[v1])
-		{
 
+
+		for(int i = 0; i < lista[v1-1].size(); i++)
+		{
+            
 			// If this adjacent node is the destination node,
 			// then return true
-			if(x == v2)
+			if(lista[v1-1][i].first == v2)
 				return true;
 
 			// Else, continue to do BFS		
-			if(!visited[x])
+			if(!visited[lista[v1-1][i].first])
 			{
-				visited[x] = true;
-				q.push(x);
+				visited[lista[v1-1][i].first] = true;
+				q.push(lista[v1-1][i].first);
 			}
+			
 		}
 	}
 
@@ -260,27 +287,97 @@ bool checkCaminho(int v1,int v2)
 	return false;
 }
 
-void verificaCaminho(){
-    int x,y;
+//
+void verificaCaminho(vector <pair<int, int> > lista[], int tGrafo){
+    int v1,v2;
 
     cout << "Digite o primeiro vertice para checar o caminho: ";
-    cin >> x;
+    cin >> v1;
     cout << "Digite o segundo vertice para checar o caminho: ";
-    cin >> y;
+    cin >> v2;
 
-    if(checkCaminho(x,y)){
-        cout << "Existe um caminho entre " << x << " e " << y;
+    if(checkCaminho(lista, v1, v2, tGrafo)){
+        cout << "\nExiste um caminho entre " << v1 << " e " << v2;
     }else{
-        cout << "Nao existe um caminho entre " << x << " e " << y;
+        cout << "\nNao existe um caminho entre " << v1 << " e " << v2;
     }
 
-    printVertice(x);
-    printVertice(y);
+    printVertice(v1);
+    printVertice(v2);
 
 
 }
 
-void teste(){
+void addPeso(vector <pair<int, int> > lista[], int v1, int & v2, int peso){
+	/*
+	cout << "\n\nEntrando no addPeso()";
+
+	cout << "\nValor de V1: " << v1;
+	cout << "\nValor de V2: " << v2;*/
+
+	
+	for (int i = 0; i < lista[v1].size(); i++)
+	{
+		//cout << "\nPESO DO ADDPESO()1: " << lista[v1][i].first;
+		if (lista[v1][i].first == v2)
+		{
+			//cout << "\n\nPeso foi aceito no IF 1";
+
+			lista[v1][i].second = peso;	
+		}
+		
+	}
+
+	//cout << endl;
+
+	for (int i = 0; i < lista[v1].size(); i++)
+	{
+		//cout << "\nIT->FIRST DO ADDPESO()2: " << lista[v2-1][i].first - 1;
+		if (lista[v2-1][i].first == v1+1)
+		{
+			//cout << "\n\nIT->FIRST foi aceito no IF 2";
+			lista[v2-1][i].second = peso;	
+		}
+		
+	}
+}
+
+void ponderado(vector <pair<int, int> > lista[], int tGrafo){
+
+	int peso;
+
+
+	for (int i = 0; i < tGrafo; i++){
+
+
+		for (int j = 0; j < lista[i].size(); j++){
+			/*
+			cout << "\nLista size: " << lista[i].size();
+
+			cout << "\nIT->FIRST: " << lista[i][j].first;
+		
+			cout << "\n\nValor antes: " << lista[i][j].second;*/
+
+
+			if (lista[i][j].second == 0)
+			{
+				cout << "\nDigite o valor do peso da aresta que liga os vertices " << i + 1 << " e " << lista[i][j].first << ": ";
+				cin >> peso;
+				addPeso(lista, i, lista[i][j].first, peso);
+				
+
+			}
+
+			cout << "\n\nValor depois: " << lista[i][j].second << endl;
+		
+	}
+	
+	}
+	
+	
+}
+//
+void teste(vector <pair<int, int> > lista[]){
     Vertice v1 (1, "Predio 1", "Academico");
     Vertice v2 (2, "Bar", "Comercial");
     Vertice v3 (3, "Predio 3", "Academico");
@@ -292,7 +389,6 @@ void teste(){
     Vertice v9 (9, "Estacionamento Leste", "Estacionamente");
     Vertice v10(10, "Estacionaemento Sudeste", "Estacionamento");
 
-    cout << "\nCriou objs";
 
     nodos.push_back(v1);
     nodos.push_back(v2);
@@ -305,59 +401,61 @@ void teste(){
     nodos.push_back(v9);
     nodos.push_back(v10);
     
-    cout << "\nInseriu no vetor";
 
-    addEdge(1,2);
-	addEdge(1,3);
-	addEdge(2,3);
-	addEdge(2,4);
-    addEdge(3,4);
-	addEdge(3,5);
-    addEdge(4,6);
-    addEdge(6,7);
-    addEdge(6,6);
+    addEdge(lista, 1, 2, 0);
+	addEdge(lista, 1, 3, 0);
+	addEdge(lista, 2, 3, 0);
+	addEdge(lista, 2, 4, 0);
+    addEdge(lista, 3, 4, 0);
+	addEdge(lista, 3, 5, 0);
+    addEdge(lista, 4, 6, 0);
+    addEdge(lista, 6, 7, 0);
+    addEdge(lista, 6, 6, 0);
 
-    cout << "Criou arestas";
 }
 
-void menu(vector<vector<int>> & matriz, int tam){
-    int op, x, y;    
+//
+void menu(vector <pair<int, int> > lista[], int tGrafo){
+    int op;    
 
     cout << "\n\nMENU PRINCIPAL\n\n";
     
     while (op != 0)
     {
-        cout    << "\n1 - Adicionar arestas;" << endl
-                << "2 - Remover arestas;"   << endl
-                << "3 - Imprimir matriz de adjacencia" << endl
-                << "4 - Verificar se dois vertices sao adjacentes" << endl
+        cout    << "\n1 - Adicionar arestas;"                           << endl
+                << "2 - Remover arestas;"                               << endl
+                << "3 - Imprimir lista de adjacencia"                   << endl
+                << "4 - Verificar se dois vertices sao adjacentes"      << endl
                 << "5 - Checa se existe um caminho entre dois vertices" << endl
-                << "6 - Cecha se existe um vertice possui laco" << endl
-                << "0 - Sair" << endl
+                << "6 - Checa se existe um vertice possui laco"         << endl
+                << "7 - Tornar grafo ponderado"                         << endl
+                << "0 - Sair"                                           << endl
                 << "Opcao: ";
         cin >> op;
 
         switch (op)
         {
         case 1:
-            addAresta(matriz);
+            addAresta(lista);
             break;
         case 2:
-            removeAresta(matriz);
+            removeAresta(lista);
             break;
         case 3:
-            printLista(matriz, tam);
+            printLista(lista, tGrafo);
             break;
         case 4: 
-            verificaAdj(matriz);
+            verificaAdj(lista);
             break;
         case 5:
-            verificaCaminho();
+            verificaCaminho(lista, tGrafo);
             break;
         case 6:
-            verificaLaco();
+            verificaLaco(lista);
             break;
-        
+        case 7:
+            ponderado(lista, tGrafo);
+            break;
         default:
             break;
         }
@@ -366,33 +464,30 @@ void menu(vector<vector<int>> & matriz, int tam){
 }
 
   
-
 int main()
 {
-    int tMatriz;
-
-    cout << "Tamanho do grafo: ";
-    cin >> tMatriz;
-
-    lista = vector<vector<int>>(tMatriz);
-
-    //inicializar a matriz em 0
-    //initMatriz(matriz, tMatriz);
-
-    int x;
+    int tGrafo, op;
 
     cout << "Deseja inicar teste ou normalmente\n1 - Teste\nElse - Normal\nOpcao: ";
-    cin >> x;
-    if(x == 1){
-        cout << "\nEntrou na condicao";
-        teste();
-        cout << "\nPassou no teste";
-        menu(lista, tMatriz);
-    }else{
-    criaVertice(tMatriz);
-    printVetorVert();
+    cin >> op;
+    if(op == 1){
+        tGrafo = 10;
+        vector<pair<int, int>> lista[tGrafo]; 
 
-    menu(lista, tMatriz);
+        teste(lista);
+        
+        menu(lista, tGrafo);
+
+    }else{
+        cout << "Tamanho do grafo: ";
+        cin >> tGrafo;
+
+        vector<pair<int, int>> lista[tGrafo]; 
+        
+        criaVertice(tGrafo);
+        printVetorVert();
+
+        menu(lista, tGrafo);
     }
     
 }
