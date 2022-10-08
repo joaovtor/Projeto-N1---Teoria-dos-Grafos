@@ -6,23 +6,21 @@ vector<Vertice> nodos;
 vector<pair<int,int>> lista;
 
 
-// preenche o vetor de vertices
 void criaVertice(int tam){
-    //recebe o tamanho e faz a atribuição aqui dentro
+
     for (int i = 0; i < tam; i++)
     {
         Vertice v;
         cin.ignore();
         cout << endl << "Digite nome: ";
-         // getline() e cin() tavam pulando as linhas por causa do que estava sendo inserido, o ignore() milagrosamente resolveu
-        getline(cin, v.nome); //cin pega só a primeira palavra inseriada, getline pega tudo
+        getline(cin, v.nome); 
         cout << endl << "Digite ID: ";
         cin >> v.id;
         cout << endl << "Digite categoria: ";
         cin.ignore();
         getline(cin, v.categoria);
 
-        nodos.push_back(v); //insere o objeto no final do vetor
+        nodos.push_back(v); 
 
     }
     
@@ -165,10 +163,10 @@ void delEdge(vector <pair<int, int> > lista[], int v1, int v2){
     {
         for (auto it = lista[v1-1].begin(); it!=lista[v1-1].end(); it++)
 	    {
-            cout << "\nIT->FIRST 1: " << it->first;
+            
 		    if (it->first == v2)
 		    {
-                cout << "\nAPAGOU NO IF 1";
+                
 			    lista[v1-1].erase(it);	
                 break;
 		    }
@@ -176,10 +174,10 @@ void delEdge(vector <pair<int, int> > lista[], int v1, int v2){
 	    }
 	    for (auto it = lista[v2-1].begin(); it!=lista[v2-1].end(); it++)
 	    {
-            cout << "\nIT->FIRST 2: " << it->first;
+            
 		    if (it->first == v1)
 		    {
-                cout << "\nAPAGOU NO IF 2";
+                
 			    lista[v2-1].erase(it);	
                 break;
 		    }
@@ -404,14 +402,14 @@ void teste(vector <pair<int, int> > lista[]){
 
     addEdge(lista, 1, 2, 0);
 	addEdge(lista, 1, 3, 0);
+    addEdge(lista, 1, 10, 0);
 	addEdge(lista, 2, 3, 0);
 	addEdge(lista, 2, 4, 0);
-    addEdge(lista, 3, 4, 0);
-	addEdge(lista, 3, 5, 0);
-    addEdge(lista, 4, 6, 0);
+    addEdge(lista, 4, 5, 0);
+    addEdge(lista, 4, 8, 0);
     addEdge(lista, 6, 7, 0);
-    addEdge(lista, 6, 6, 0);
-
+    addEdge(lista, 9, 10, 0);
+    
 }
 
 //
@@ -463,7 +461,7 @@ void menu(vector <pair<int, int> > lista[], int tGrafo){
     
 }
 
-  
+
 int main()
 {
     int tGrafo, op;
