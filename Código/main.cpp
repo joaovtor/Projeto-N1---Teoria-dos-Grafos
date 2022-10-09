@@ -92,6 +92,71 @@ void addAresta(vector <pair<int, int> > lista[]){
     printVertice(y);
 }
 
+
+bool checkSubGrafo(vector <pair<int, int> > lista[], vector<int> subGrafo ){
+    int x, aux, y;
+    bool ehSubGrafo = false;
+
+
+    //primeiro for serve pra guardar a linha que vai ser verificada, aux recebe o valor do vetor do subgrafo
+    //segundo for guarda a posição do valor do vetor do subgrafo pra verificar
+    //terceiro for serve pra percorrer toda a linha
+
+    cout << "\nsubGrafo.size() vale: " << subGrafo.size();
+
+    for (int j = 0; j < subGrafo.size(); j++)
+    {
+        aux = subGrafo[j];
+        x = 0;
+
+        for (int k = 0; k < subGrafo.size(); k++)
+        {
+
+            for (int l = 0; l < lista[aux-1].size(); l++)
+            {   
+                
+                if(lista[aux-1][l].first == subGrafo[k]){
+                    x++;
+                }
+            }
+        }
+
+        if(x > 0){
+            ehSubGrafo = true;
+        }else{
+            ehSubGrafo = false;
+            break;
+        }
+        
+    }
+    
+    return ehSubGrafo;
+}
+
+void verificaSubgrafo(vector <pair<int, int> > lista[]){
+
+    vector<int> subGrafo;
+    int tam, aux = 0;
+
+    cout << "\nDigite o tamanho do subgrafo: ";
+    cin >> tam;
+
+    for (int i = 0; i < tam; i++)
+    {
+        cout << "\nDigite o vertice " << i + 1 << ": ";
+        cin >> aux;
+
+        cout << "\nGuardou valor";
+
+        subGrafo.push_back(aux);
+    }
+
+    if(checkSubGrafo(lista, subGrafo)){
+        cout << "\nO subgrafo inserido existe!";
+    }else
+        cout << "\nO subgrafo inserido nao existe!";
+}
+
 //
 int checkLaco(vector <pair<int, int> > lista[], int v1){
 
@@ -307,33 +372,21 @@ void verificaCaminho(vector <pair<int, int> > lista[], int tGrafo){
 }
 
 void addPeso(vector <pair<int, int> > lista[], int v1, int & v2, int peso){
-	/*
-	cout << "\n\nEntrando no addPeso()";
-
-	cout << "\nValor de V1: " << v1;
-	cout << "\nValor de V2: " << v2;*/
-
 	
 	for (int i = 0; i < lista[v1].size(); i++)
 	{
-		//cout << "\nPESO DO ADDPESO()1: " << lista[v1][i].first;
+		
 		if (lista[v1][i].first == v2)
 		{
-			//cout << "\n\nPeso foi aceito no IF 1";
-
 			lista[v1][i].second = peso;	
 		}
 		
 	}
 
-	//cout << endl;
-
 	for (int i = 0; i < lista[v1].size(); i++)
 	{
-		//cout << "\nIT->FIRST DO ADDPESO()2: " << lista[v2-1][i].first - 1;
 		if (lista[v2-1][i].first == v1+1)
 		{
-			//cout << "\n\nIT->FIRST foi aceito no IF 2";
 			lista[v2-1][i].second = peso;	
 		}
 		
@@ -349,30 +402,18 @@ void ponderado(vector <pair<int, int> > lista[], int tGrafo){
 
 
 		for (int j = 0; j < lista[i].size(); j++){
-			/*
-			cout << "\nLista size: " << lista[i].size();
-
-			cout << "\nIT->FIRST: " << lista[i][j].first;
-		
-			cout << "\n\nValor antes: " << lista[i][j].second;*/
-
 
 			if (lista[i][j].second == 0)
 			{
 				cout << "\nDigite o valor do peso da aresta que liga os vertices " << i + 1 << " e " << lista[i][j].first << ": ";
 				cin >> peso;
 				addPeso(lista, i, lista[i][j].first, peso);
-				
-
 			}
 
 			cout << "\n\nValor depois: " << lista[i][j].second << endl;
 		
+	    }
 	}
-	
-	}
-	
-	
 }
 //
 void teste(vector <pair<int, int> > lista[]){
@@ -415,11 +456,10 @@ void teste(vector <pair<int, int> > lista[]){
 //
 void menu(vector <pair<int, int> > lista[], int tGrafo){
     int op;    
-
-    cout << "\n\nMENU PRINCIPAL\n\n";
     
     while (op != 0)
     {
+        cout << "\n\nMENU PRINCIPAL\n\n";
         cout    << "\n1 - Adicionar arestas;"                           << endl
                 << "2 - Remover arestas;"                               << endl
                 << "3 - Imprimir lista de adjacencia"                   << endl
@@ -427,6 +467,7 @@ void menu(vector <pair<int, int> > lista[], int tGrafo){
                 << "5 - Checa se existe um caminho entre dois vertices" << endl
                 << "6 - Checa se existe um vertice possui laco"         << endl
                 << "7 - Tornar grafo ponderado"                         << endl
+                << "8 - Verificar um subgrafo"                          << endl
                 << "0 - Sair"                                           << endl
                 << "Opcao: ";
         cin >> op;
@@ -454,11 +495,16 @@ void menu(vector <pair<int, int> > lista[], int tGrafo){
         case 7:
             ponderado(lista, tGrafo);
             break;
-        default:
+        case 8:
+            verificaSubgrafo(lista);
             break;
+        case 0:
+            cout << "\n\nTchauzinho!\n";
+            break;
+        default:
+            cout << "\nValor invalido\n";
         }
     }
-    
 }
 
 
