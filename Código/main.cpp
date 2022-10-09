@@ -307,19 +307,21 @@ void printCaminho(vector <pair<int, int> > lista[], vector<int> caminho){
 
     int x;
 
-    cout << "\n\nCaminho.size() = " << caminho.size();
+    cout << endl;
 
-    for (int i = caminho.size() - 1; i = 1; i--)
+    for (int i = 0; i < caminho.size(); i++)
+    {
+        cout << caminho[i] << " - ";
+    }
+    
+
+    for (int i = caminho.size() - 1; i > 0; i--)
     {
         x = 0;
-        cout << "\nFOR I" << i;
-        for (int j = 0; i  = lista[i-1].size(); j++)
+        for (int j = 0; j < lista[caminho[i]-1].size(); j++)
         {
-            cout << "\nFOR J " << j;
-            cout << "\nPosicao da lista: " << lista[i-1][j].first << "eh igual a " << caminho[i-2] << "?";
-            if (lista[i-1][j].first == caminho[i-2])
+            if (lista[caminho[i]-1][j].first == caminho[i-1])
             {
-                cout << "\nValor encontrado";
                 x = 1;
                 
             }
@@ -328,7 +330,7 @@ void printCaminho(vector <pair<int, int> > lista[], vector<int> caminho){
         
         if (x == 0)
         {
-            caminho.erase(caminho.begin() + i - 2);
+            caminho.erase(caminho.begin() + i - 1);
             i++;
         }
         
@@ -337,9 +339,9 @@ void printCaminho(vector <pair<int, int> > lista[], vector<int> caminho){
 
     cout << "\n\nCaminho\n\n";
 
-    for (int i = caminho.size(); i = 0; i--)
+    for (int i = 0; i < caminho.size(); i++)
     {
-        cout << caminho[i-1] << " - ";
+        cout << caminho[i] << " - ";
     }
     
     
@@ -367,6 +369,7 @@ void checkCaminho(vector <pair<int, int> > lista[], int v1,int v2, int tGrafo)
 	// Mark the current node as visited and enqueue it
 	visited[v1]= true;
 	q.push(v1);
+    caminhoPercorrido.push_back(v1);
 
 	while(!q.empty())
 	{
@@ -384,9 +387,11 @@ void checkCaminho(vector <pair<int, int> > lista[], int v1,int v2, int tGrafo)
             
 			// If this adjacent node is the destination node,
 			// then return true
-			if(lista[v1-1][i].first == v2)
+			if(lista[v1-1][i].first == v2){
 				temCaminho = true;
-
+                caminhoPercorrido.push_back(lista[v1-1][i].first);
+                break;
+            }
 			// Else, continue to do BFS		
 			if(!visited[lista[v1-1][i].first])
 			{
