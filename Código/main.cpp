@@ -302,13 +302,61 @@ void printLista(vector<pair<int,int> > adj[], int tGrafo)
     }
 }
 
+
+void printCaminho(vector <pair<int, int> > lista[], vector<int> caminho){
+
+    int x;
+
+    cout << "\n\nCaminho.size() = " << caminho.size();
+
+    for (int i = caminho.size() - 1; i = 1; i--)
+    {
+        x = 0;
+        cout << "\nFOR I" << i;
+        for (int j = 0; i  = lista[i-1].size(); j++)
+        {
+            cout << "\nFOR J " << j;
+            cout << "\nPosicao da lista: " << lista[i-1][j].first << "eh igual a " << caminho[i-2] << "?";
+            if (lista[i-1][j].first == caminho[i-2])
+            {
+                cout << "\nValor encontrado";
+                x = 1;
+                
+            }
+            
+        }
+        
+        if (x == 0)
+        {
+            caminho.erase(caminho.begin() + i - 2);
+            i++;
+        }
+        
+    }
+
+
+    cout << "\n\nCaminho\n\n";
+
+    for (int i = caminho.size(); i = 0; i--)
+    {
+        cout << caminho[i-1] << " - ";
+    }
+    
+    
+}
+
 //
-bool checkCaminho(vector <pair<int, int> > lista[], int v1,int v2, int tGrafo)
+void checkCaminho(vector <pair<int, int> > lista[], int v1,int v2, int tGrafo)
 {
+
+    bool temCaminho = false;
+    vector<int> caminhoPercorrido;
+
 	// Base case
 	if(v1 == v2){
-		return true;
+		temCaminho = true;
 	}
+
 
 	// Mark all the vertices as not visited
 	vector<bool> visited(tGrafo,false);
@@ -337,20 +385,28 @@ bool checkCaminho(vector <pair<int, int> > lista[], int v1,int v2, int tGrafo)
 			// If this adjacent node is the destination node,
 			// then return true
 			if(lista[v1-1][i].first == v2)
-				return true;
+				temCaminho = true;
 
 			// Else, continue to do BFS		
 			if(!visited[lista[v1-1][i].first])
 			{
 				visited[lista[v1-1][i].first] = true;
 				q.push(lista[v1-1][i].first);
+                caminhoPercorrido.push_back(lista[v1-1][i].first);
 			}
 			
 		}
 	}
 
-// If BFS is complete without visiting d
-	return false;
+    if (temCaminho)
+    {
+        cout << "\n\nCaminho existe";
+    }
+    else
+        cout << "\n\nCaminho nao existe";
+
+    printCaminho(lista, caminhoPercorrido);
+    
 }
 
 //
@@ -362,11 +418,7 @@ void verificaCaminho(vector <pair<int, int> > lista[], int tGrafo){
     cout << "Digite o segundo vertice para checar o caminho: ";
     cin >> v2;
 
-    if(checkCaminho(lista, v1, v2, tGrafo)){
-        cout << "\nExiste um caminho entre " << v1 << " e " << v2;
-    }else{
-        cout << "\nNao existe um caminho entre " << v1 << " e " << v2;
-    }
+    checkCaminho(lista, v1, v2, tGrafo);
 
     printVertice(v1);
     printVertice(v2);
@@ -452,6 +504,7 @@ void teste(vector <pair<int, int> > lista[]){
     addEdge(lista, 4, 5, 0);
     addEdge(lista, 4, 8, 0);
     addEdge(lista, 6, 7, 0);
+    addEdge(lista, 7, 8, 0);
     addEdge(lista, 9, 10, 0);
     
 }
