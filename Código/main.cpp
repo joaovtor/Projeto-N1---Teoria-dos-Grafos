@@ -102,8 +102,6 @@ bool checkSubGrafo(vector <pair<int, int> > lista[], vector<int> subGrafo ){
     //segundo for guarda a posição do valor do vetor do subgrafo pra verificar
     //terceiro for serve pra percorrer toda a linha
 
-    cout << "\nsubGrafo.size() vale: " << subGrafo.size();
-
     for (int j = 0; j < subGrafo.size(); j++)
     {
         aux = subGrafo[j];
@@ -146,15 +144,20 @@ void verificaSubgrafo(vector <pair<int, int> > lista[]){
         cout << "\nDigite o vertice " << i + 1 << ": ";
         cin >> aux;
 
-        cout << "\nGuardou valor";
-
         subGrafo.push_back(aux);
     }
 
     if(checkSubGrafo(lista, subGrafo)){
-        cout << "\nO subgrafo inserido existe!";
+        cout << "\nO subgrafo inserido existe!\n";
     }else
-        cout << "\nO subgrafo inserido nao existe!";
+        cout << "\nO subgrafo inserido nao existe!\n";
+
+
+    for (int i = 0; i < subGrafo.size(); i++)
+    {
+        printVertice(subGrafo[i]);
+    }
+    
 }
 
 //
