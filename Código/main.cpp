@@ -290,6 +290,13 @@ void printCaminho(vector <pair<int, int> > lista[], vector<int> caminho){
     int x;
     int distancia = 0;
 
+    cout << "\n\nCaminho no inicio da funcao" <<  endl;
+
+    for (int i = 0; i < caminho.size(); i++)
+    {
+        cout << caminho[i] << " - ";
+    }
+
 
     //laço de repetição invertido pra pegarmos a posição do final e ir até o começo
     for (int i = caminho.size() - 1; i > 0; i--)
@@ -497,6 +504,52 @@ void ponderado(vector <pair<int, int> > lista[], int tGrafo){
 	    }
 	}
 }
+
+void checkCompleto(vector <pair<int, int> > lista[], int tGrafo){
+
+    int aux = 0;
+
+    int parada = 0;
+
+    for (int i = 0; i < tGrafo; i++)
+    {
+        aux++;
+        
+        if (lista[i].size() == tGrafo-1)
+        {
+            for (int j = 0; j < lista[i].size(); j++)
+            {
+                if (i + 1 != aux)
+                {
+                    if (lista[i][j].first != aux)
+                    {  
+                        parada = 1;
+                        break;
+
+                    }
+                }  
+            }
+            
+            if (parada == 1)
+            {
+                break;
+            }
+            
+        }
+        else{
+            cout << "\n\nGrafo nao eh completo de baixo";
+            break;
+        }
+
+    }
+    
+    if (parada == 0)
+    {
+        cout << "\n\nGrafo eh completo!";
+    }
+    
+    
+}
 //
 void teste(vector <pair<int, int> > lista[]){
     Vertice v1 (1, "Predio 1", "Academico");
@@ -551,6 +604,7 @@ void menu(vector <pair<int, int> > lista[], int tGrafo){
                 << "6 - Checa se existe um vertice possui laco"         << endl
                 << "7 - Tornar grafo ponderado"                         << endl
                 << "8 - Verificar um subgrafo"                          << endl
+                << "9 - Checar se o grafo eh completo"                  << endl
                 << "0 - Sair"                                           << endl
                 << "Opcao: ";
         cin >> op;
@@ -580,6 +634,9 @@ void menu(vector <pair<int, int> > lista[], int tGrafo){
             break;
         case 8:
             verificaSubgrafo(lista);
+            break;
+        case 9:
+            checkCompleto(lista, tGrafo);
             break;
         case 0:
             cout << "\n\nTchauzinho!\n";
