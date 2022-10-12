@@ -4,6 +4,7 @@
 
 vector<Vertice> nodos;
 vector<pair<int,int>> lista;
+bool ehPonderado = false;
 
 
 void criaVertice(int tam){
@@ -25,23 +26,6 @@ void criaVertice(int tam){
     }
     
 };
-
-void initGrafo(vector<vector<int>> & v, int tam){
-    
-    for (int i = 0; i < tam; i++)
-    {
-        vector<int> v1; 
-
-        for (int j = 0; j < tam; j++)
-        {
-            v1.push_back(0);
-
-        }
-
-        v.push_back(v1);
-    }
-    
-}
 
 //imprime o vetor de vertices
 void printVetorVert(){
@@ -293,8 +277,6 @@ void printLista(vector<pair<int,int> > adj[], int tGrafo)
         cout << "Vertice " << u+1 << " esta conectado com \n";
         for (auto it = adj[u].begin(); it!=adj[u].end(); it++)
         {
-            v = it->first;
-            w = it->second;
             cout << "\tVertice " << it->first << " com peso da aresta de: "
                  << it->second << "\n";
         }
@@ -306,20 +288,18 @@ void printLista(vector<pair<int,int> > adj[], int tGrafo)
 void printCaminho(vector <pair<int, int> > lista[], vector<int> caminho){
 
     int x;
+    int distancia = 0;
 
-    cout << endl;
 
-    for (int i = 0; i < caminho.size(); i++)
-    {
-        cout << caminho[i] << " - ";
-    }
-    
-
+    //laço de repetição invertido pra pegarmos a posição do final e ir até o começo
     for (int i = caminho.size() - 1; i > 0; i--)
     {
         x = 0;
+
+        //for que a condição de parada é o tamanho da linha do vértice atual
         for (int j = 0; j < lista[caminho[i]-1].size(); j++)
         {
+            //se na linha do vértice for encontrado o próximo vértice
             if (lista[caminho[i]-1][j].first == caminho[i-1])
             {
                 x = 1;
@@ -328,22 +308,51 @@ void printCaminho(vector <pair<int, int> > lista[], vector<int> caminho){
             
         }
         
+        //se não for encontrado, retira o número do vetor e repete o mesmo número
         if (x == 0)
         {
             caminho.erase(caminho.begin() + i - 1);
-            i++;
+            //i++;
         }
         
     }
 
+    cout << "\n\nCaminho percorrido\n\n";
 
-    cout << "\n\nCaminho\n\n";
-
-    for (int i = 0; i < caminho.size(); i++)
+     for (int i = 0; i < caminho.size(); i++)
     {
         cout << caminho[i] << " - ";
     }
+
+
+    if (ehPonderado)
+    {
+
+        for (int i = 1; i <= caminho.size(); i++)
+        {
+
+            for (int j = 0; j < lista[caminho[i-1]].size(); j++)
+            {
+
+                if (lista[caminho[i-1]][j].first == caminho[i-1])
+                {
+                    distancia = distancia + lista[caminho[i-1]][j].second;
+                }
+                
+            }
+            
+        }
+
+    cout << "\nDistancia total: " << distancia << endl;
+        
+    }
+
+   
+    for (int i = 0; i < caminho.size(); i++)
+    {
+        printVertice(caminho[i]);
     
+    }
     
 }
 
@@ -351,6 +360,7 @@ void printCaminho(vector <pair<int, int> > lista[], vector<int> caminho){
 void checkCaminho(vector <pair<int, int> > lista[], int v1,int v2, int tGrafo)
 {
 
+    int aux;
     bool temCaminho = false;
     vector<int> caminhoPercorrido;
 
@@ -405,12 +415,29 @@ void checkCaminho(vector <pair<int, int> > lista[], int v1,int v2, int tGrafo)
 
     if (temCaminho)
     {
-        cout << "\n\nCaminho existe";
+
+        cout << "\n\nExiste um caminho entre " << caminhoPercorrido[0] << " e " << v2 << endl;
+        
+        
+        for (int i = caminhoPercorrido.size()-1; i > 0; i--)
+        {
+            if (caminhoPercorrido[i] == v2)
+            {
+                break;
+            }
+            else{
+                caminhoPercorrido.erase(caminhoPercorrido.begin() + 1);
+            }
+            
+        }
+        
+
+        printCaminho(lista, caminhoPercorrido);
     }
     else
-        cout << "\n\nCaminho nao existe";
+        cout << "\n\nNao existe um caminho entre " << caminhoPercorrido[0] << " e " << v2 << endl;
 
-    printCaminho(lista, caminhoPercorrido);
+    
     
 }
 
@@ -424,10 +451,6 @@ void verificaCaminho(vector <pair<int, int> > lista[], int tGrafo){
     cin >> v2;
 
     checkCaminho(lista, v1, v2, tGrafo);
-
-    printVertice(v1);
-    printVertice(v2);
-
 
 }
 
@@ -457,6 +480,7 @@ void ponderado(vector <pair<int, int> > lista[], int tGrafo){
 
 	int peso;
 
+    ehPonderado = true;
 
 	for (int i = 0; i < tGrafo; i++){
 
@@ -469,8 +493,6 @@ void ponderado(vector <pair<int, int> > lista[], int tGrafo){
 				cin >> peso;
 				addPeso(lista, i, lista[i][j].first, peso);
 			}
-
-			cout << "\n\nValor depois: " << lista[i][j].second << endl;
 		
 	    }
 	}
