@@ -505,6 +505,61 @@ void ponderado(vector <pair<int, int> > lista[], int tGrafo){
 	}
 }
 
+
+bool isCyclicUtil(vector <pair<int, int> > lista[], int v, bool visited[], int parent)
+{
+ 
+    // Mark the current node as visited
+    visited[v] = true;
+ 
+    // Recur for all the vertices
+    // adjacent to this vertex
+    //list<int>::iterator i;
+
+    for (auto i = lista[v].begin(); i != lista[v].end(); ++i) {
+ 
+        // If an adjacent vertex is not visited,
+        // then recur for that adjacent
+        if (!visited[i->first]) {
+            if (isCyclicUtil(lista, i->first, visited, v))
+                return true;
+        }
+ 
+        // If an adjacent vertex is visited and
+        // is not parent of current vertex,
+        // then there exists a cycle in the graph.
+        else if (i->first != parent)
+            return true;
+    }
+    return false;
+}
+ 
+// Returns true if the graph contains
+// a cycle, else false.
+bool isCyclic(vector <pair<int, int> > lista[], int tGrafo)
+{
+ 
+    // Mark all the vertices as not
+    // visited and not part of recursion
+    // stack
+    bool* visited = new bool[tGrafo];
+    for (int i = 0; i < tGrafo; i++)
+        visited[i] = false;
+ 
+    // Call the recursive helper
+    // function to detect cycle in different
+    // DFS trees
+    for (int u = 0; u < tGrafo; u++) {
+ 
+        // Don't recur for u if
+        // it is already visited
+        if (!visited[u])
+            if (isCyclicUtil(lista, u, visited, -1))
+                return true;
+    }
+    return false;
+}
+
 void checkCompleto(vector <pair<int, int> > lista[], int tGrafo){
 
     int aux = 0;
@@ -529,7 +584,7 @@ void checkCompleto(vector <pair<int, int> > lista[], int tGrafo){
                     }
                 }  
             }
-            
+
             if (parada == 1)
             {
                 break;
@@ -605,6 +660,7 @@ void menu(vector <pair<int, int> > lista[], int tGrafo){
                 << "7 - Tornar grafo ponderado"                         << endl
                 << "8 - Verificar um subgrafo"                          << endl
                 << "9 - Checar se o grafo eh completo"                  << endl
+                << "10 - Verifica existencia de ciclo"                  << endl
                 << "0 - Sair"                                           << endl
                 << "Opcao: ";
         cin >> op;
@@ -637,6 +693,13 @@ void menu(vector <pair<int, int> > lista[], int tGrafo){
             break;
         case 9:
             checkCompleto(lista, tGrafo);
+            break;
+        case 10:
+            if (isCyclic(lista, tGrafo) == true)
+            {
+                cout << "\n\nExiste um ciclo no grafo";
+            }else
+                cout << "\n\nNao existe um ciclo no grafo";
             break;
         case 0:
             cout << "\n\nTchauzinho!\n";
